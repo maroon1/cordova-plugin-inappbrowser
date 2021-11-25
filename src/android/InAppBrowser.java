@@ -992,6 +992,12 @@ public class InAppBrowser extends CordovaPlugin {
                 // Enable Thirdparty Cookies
                 CookieManager.getInstance().setAcceptThirdPartyCookies(inAppWebView,true);
 
+                HashMap<String, String> headers = new HashMap<String, String>();
+                String referrer = features.get("referrer");
+                if (referrer != null) {
+                    headers.put("referer", referrer);
+                }
+
                 inAppWebView.loadUrl(url);
                 inAppWebView.setId(Integer.valueOf(6));
                 inAppWebView.getSettings().setLoadWithOverviewMode(true);

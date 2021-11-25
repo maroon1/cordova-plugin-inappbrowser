@@ -257,7 +257,12 @@ static CDVWKInAppBrowser* instance = nil;
     }
     _waitForBeforeload = ![_beforeload isEqualToString:@""];
     
-    [self.inAppBrowserViewController navigateTo:url];
+    if (browserOptions.referrer == nil) {
+        [self.inAppBrowserViewController navigateTo:url];
+    } else {
+        [self.inAppBrowserViewController navigateTo:url withReferrer:browserOptions.referrer];
+    }
+
     if (!browserOptions.hidden) {
         [self show:nil withNoAnimate:browserOptions.hidden];
     }
@@ -1111,6 +1116,17 @@ BOOL isExiting = FALSE;
         [self.webView loadFileURL:url allowingReadAccessToURL:url];
     } else {
         NSURLRequest* request = [NSURLRequest requestWithURL:url];
+        [self.webView loadRequest:request];
+    }
+}
+
+- (void)navigateTo:(NSURL*)url withReferrer:(NSString *)referrer
+{
+    if ([url.scheme isEqualToString:@"file"]) {
+        [self.webView loadFileURL:url allowingReadAccessToURL:url];
+    } else {
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+        [request setValue:referrer forHTTPHeaderField:@"referer"];
         [self.webView loadRequest:request];
     }
 }
